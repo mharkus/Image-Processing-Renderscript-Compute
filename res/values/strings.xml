@@ -1,0 +1,5 @@
+<resources>
+    <string name="title_example_list">Examples</string>
+    <string name="title_example_detail">Example Detail</string>
+    <string name="app_title">Renderscript Compute Demo</string>
+</resources>

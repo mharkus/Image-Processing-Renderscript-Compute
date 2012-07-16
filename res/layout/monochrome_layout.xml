@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/displayin"
+                android:layout_width="0dip"
+                android:layout_height="220dip"
+                android:layout_weight="1.0" />
+
+            <ImageView
+                android:id="@+id/displayout"
+                android:layout_width="0dip"
+                android:layout_height="220dip"
+                android:layout_weight="1.0" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/goMonoButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Go Mono" android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+</ScrollView>
