@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="filters">
+        <item>Gaussian Blur</item>
+        <item>Motion Blur</item>
+        <item>Edge Detection</item>
+        <item>Sharpen</item>
+        <item>Emboss</item>
+    </string-array>
+    
+</resources>

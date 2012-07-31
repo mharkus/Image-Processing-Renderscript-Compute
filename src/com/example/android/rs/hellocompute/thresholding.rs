@@ -20,35 +20,23 @@
 rs_allocation gIn;
 rs_allocation gOut;
 rs_script gScript;
-int rand;
-
-const static float3 gMonoMult = {0.299f, 0.587f, 0.114f};
+float threshold;
 
 void root(const uchar4 *v_in, uchar4 *v_out, const void *usrData, uint32_t x, uint32_t y) {
     float4 f4 = rsUnpackColor8888(*v_in);
-    float r = f4.r;
-	float g = f4.g;
-	float b = f4.b;
     
-    if(rand == 0){
-    	r = r / 3;
-    	g = g / 3;
-    	b = b * 5;
-    	b = fmin(b, 1);
-    }else if(rand == 1){
-    	r = r * 5;
-    	g = g / 3;
-    	b = b / 3;
-    	r = fmin (r, 1);
-    }else if(rand == 2){
-    	r = r / 3;
-    	g = g * 5;
-    	b = b / 3;
-    	g = fmin (g, 1);
-    }	
-	
-    float3 mono = {r, g, b};
-    *v_out = rsPackColorTo8888(mono);
+    // get the grayscale value of all the pixels
+  	float val = 0.2989 * f4.r + 0.5870 * f4.g + 0.1140 * f4.b;
+  	
+  	// check if it is more than the threshold, if it is, set to white, else make it black
+  	val = val > threshold ? 1 : 0;
+  	
+  	// set the pixel values to the computed value
+  	f4.r = f4.g = f4.b = val;
+    
+    float3 output = {f4.r, f4.g, f4.b};
+    
+    *v_out = rsPackColorTo8888(output);
 }
 
 void filter() {

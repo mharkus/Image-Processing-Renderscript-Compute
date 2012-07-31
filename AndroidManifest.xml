@@ -43,6 +43,9 @@
         <activity android:name=".MonochromeActivity"/>
         <activity android:name=".FlipActivity"/>
         <activity android:name=".SepiaActivity"/>
+        <activity android:name=".BrightnessActivity"/>
+        <activity android:name=".ThresholdingActivity"/>
+        <activity android:name=".ConvolutionActivity"/>
     </application>
 
 </manifest>

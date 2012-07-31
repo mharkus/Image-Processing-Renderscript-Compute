@@ -31,6 +31,9 @@ public class SampleList {
         addItem(new SampleListItem("2", "Monochrome"));
         addItem(new SampleListItem("3", "Rotate & Flip"));
         addItem(new SampleListItem("4", "Sepia"));
+        addItem(new SampleListItem("5", "Brightness"));
+        addItem(new SampleListItem("6", "Thresholding"));
+        addItem(new SampleListItem("7", "Convolution"));
     }
 
     private static void addItem(SampleListItem item) {
