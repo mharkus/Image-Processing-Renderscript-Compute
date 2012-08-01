@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.renderscript.Allocation;
+import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,82 +28,80 @@ public class ConvolutionFragment extends Fragment {
 	private SeekBar factor;
 	private SeekBar bias;
 	private Spinner filter;
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.convolution_layout, null);
-		
+
 		filter = (Spinner) view.findViewById(R.id.filters);
 		filter.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
-					applyFilter(arg2);
+				applyFilter(arg2);
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				
+
 			}
 		});
-		
-		factor = (SeekBar) view.findViewById(R.id.factor); 
+
+		factor = (SeekBar) view.findViewById(R.id.factor);
 		factor.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				
-				mScript.set_factor((float)(progress/255.0f));
-				mScript.set_bias((float)(bias.getProgress()/255.0f));
-				
+
+				mScript.set_factor((float) (progress / 255.0f));
+				mScript.set_bias((float) (bias.getProgress() / 255.0f));
+
 				apply();
 				out.invalidate();
 			}
 		});
-		
-		bias = (SeekBar) view.findViewById(R.id.bias); 
+
+		bias = (SeekBar) view.findViewById(R.id.bias);
 		bias.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				
-				mScript.set_factor((float)(factor.getProgress()/255.0f));
-				mScript.set_bias((float)(progress/255.0f));
-				
+
+				mScript.set_factor((float) (factor.getProgress() / 255.0f));
+				mScript.set_bias((float) (progress / 255.0f));
+
 				apply();
 				out.invalidate();
 			}
 		});
-		
-		
+
 		mBitmapIn = loadBitmap(R.drawable.face2);
 		mBitmapOut = loadBitmap(R.drawable.face2);
 
@@ -112,10 +111,9 @@ public class ConvolutionFragment extends Fragment {
 		out = (ImageView) view.findViewById(R.id.displayout);
 		out.setImageBitmap(mBitmapOut);
 
-		createScript();
-		
 		factor.setProgress(0);
-		
+
+		createScript();
 		apply();
 		out.invalidate();
 
@@ -123,7 +121,7 @@ public class ConvolutionFragment extends Fragment {
 	}
 
 	protected void applyFilter(int index) {
-		
+
 	}
 
 	protected void apply() {
@@ -137,13 +135,31 @@ public class ConvolutionFragment extends Fragment {
 		mInAllocation = Allocation.createFromBitmap(mRS, mBitmapIn,
 				Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 		mOutAllocation = Allocation.createTyped(mRS, mInAllocation.getType());
+		mScript = new ScriptC_convolution(mRS, getResources(),
+				R.raw.convolution);
 
-		mScript = new ScriptC_convolution(mRS, getResources(), R.raw.convolution); 
+		int rowWidth = mBitmapIn.getWidth();
 
-		mScript.set_gIn(mInAllocation);
-		mScript.set_gOut(mOutAllocation);
-		mScript.set_gScript(mScript); 
+		int num_rows = mBitmapIn.getHeight();
+		int[] row_indices = new int[num_rows];
+		for (int i = 0; i < num_rows; i++) {
+			row_indices[i] = i * rowWidth;
+		}
+		Allocation row_indices_alloc = Allocation.createSized(mRS,
+				Element.I32(mRS), num_rows, Allocation.USAGE_SCRIPT);
+		row_indices_alloc.copyFrom(row_indices);
 		
+		mScript.bind_gInPixels(mInAllocation);
+		mScript.bind_gOutPixels(mOutAllocation);
+		mScript.set_mImageWidth(mBitmapIn.getWidth());
+		mScript.set_mImageHeight(mBitmapIn.getHeight());
+
+		mScript.set_gIn(row_indices_alloc);
+		mScript.set_gOut(row_indices_alloc);
+		
+		
+		mScript.set_gScript(mScript);
+
 	}
 
 	private Bitmap loadBitmap(int resource) {
