@@ -9,7 +9,7 @@
     android:showDividers="middle"
     tools:context=".ExampleListActivity">
 
-    <fragment android:name="com.example.android.rs.hellocompute.ExampleListFragment"
+    <fragment android:name="com.mlst.imageprocessing.rs.ExampleListFragment"
         android:id="@+id/example_list"
         android:layout_width="0dp"
         android:layout_height="match_parent"
